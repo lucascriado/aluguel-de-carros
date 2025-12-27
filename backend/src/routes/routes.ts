@@ -1,10 +1,14 @@
 import { Router } from 'express';
-import userController from '../controllers/userController';
+import usersController from '../controllers/usersController';
 
 const router = Router();
 
-router.get("/users/getall", userController.getAllUsers);
+// => /usuarios/
 
-router.post("/users/register", userController.registerUser)
+router.get("/usuarios/lista", usersController.List);
+
+router.get("/usuarios/encontrar-usuario", usersController.FindUser);
+
+router.post("/usuarios/cadastrar", usersController.Register)
 
 export default router;

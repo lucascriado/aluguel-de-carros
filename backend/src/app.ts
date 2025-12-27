@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/backend", router);
+app.use("/api", router);
 
 app.listen(9000, () => {
   console.log("Servidor rodando na porta 9000");
