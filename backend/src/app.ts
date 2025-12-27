@@ -1,11 +1,14 @@
 import express from 'express';
+import router from '../src/routes/routes';
+import cors from 'cors'
+
 const app = express();
-const port = 3000;
 
-app.get('/', (req, res) => {
-  res.send('está funcionando, de novo :D!');
-});
+app.use(cors());
+app.use(express.json());
 
-app.listen(port, () => {
-  return console.log(`Express is listening at http://localhost:${port}`);
+app.use("/backend", router);
+
+app.listen(9000, () => {
+  console.log("Servidor rodando na porta 9000");
 });
