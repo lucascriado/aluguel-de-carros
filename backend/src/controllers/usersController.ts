@@ -2,6 +2,8 @@ import connection from '../db/connection';
 import bcrypt from "bcrypt";
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
 
+const jwt = require("jsonwebtoken");
+
 export default class usersController {
 
   static async List(req, res) {
@@ -80,6 +82,61 @@ export default class usersController {
     } catch (err) {
       console.error(err);
       return res.status(500).json({ error: "erro ao cadastrar usuário" });
+    }
+  }
+
+  static async Login(req, res) {
+    try {
+      const { cpf, senha } = req.body;
+
+      if (!cpf || !senha) {
+        return res.status(400).json({ error: "cpf e senha são obrigatórios" });
+      }
+
+      // Buscar usuário pelo CPF
+      const [rows] = await connection.query<RowDataPacket[]>(
+        "SELECT * FROM usuarios WHERE cpf = ?",
+        [cpf]
+      );
+
+      if (rows.length === 0) {
+        return res.status(404).json({ error: "Usuário não encontrado" });
+      }
+
+      const usuario = rows[0];
+
+      // Validar senha
+      const senhaValida = await bcrypt.compare(senha, usuario.senha);
+
+      if (!senhaValida) {
+        return res.status(401).json({ error: "Senha incorreta" });
+      }
+
+      // Criar token JWT
+      const token = jwt.sign(
+        {
+          cpf: usuario.cpf,
+          nome: usuario.nome,
+          cargo: usuario.cargo
+        },
+        process.env.JWT_SECRET || "b2ffcda4-2109-40d0-a7a8-0f66d6131788",
+        { expiresIn: "2h" }
+      );
+
+      return res.json({
+        message: "Login realizado com sucesso",
+        token,
+        usuario: {
+          cpf: usuario.cpf,
+          nome: usuario.nome,
+          email: usuario.email,
+          cargo: usuario.cargo
+        }
+      });
+
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: "erro ao realizar login" });
     }
   }
 }
