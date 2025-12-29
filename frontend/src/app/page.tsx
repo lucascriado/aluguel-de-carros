@@ -9,7 +9,7 @@ export default function Home() {
       </p>
 
       <div className="grid gap-3 sm:grid-cols-3">
-        <Link href="/usuarios" className="rounded-2xl border border-slate-200 p-4 hover:bg-slate-50">
+        <Link href="/usuarios/lista" className="rounded-2xl border border-slate-200 p-4 hover:bg-slate-50">
           <div className="font-medium text-brand-secondary">Usuários</div>
           <div className="text-sm text-slate-600">Listar (rota protegida)</div>
         </Link>

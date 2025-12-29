@@ -15,7 +15,7 @@ export default function UsersPage() {
   useEffect(() => {
     const token = getToken();
     if (!token) {
-      router.push("/entrar");
+      router.push("/usuarios/entrar");
       return;
     }
 

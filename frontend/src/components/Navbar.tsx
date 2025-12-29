@@ -34,7 +34,7 @@ export default function Navbar() {
       clearToken();
       window.dispatchEvent(new Event("auth-change"));
     }
-    router.push("/entrar");
+    router.push("/usuarios/entrar");
   };
 
   return (
@@ -66,14 +66,14 @@ export default function Navbar() {
           ) : (
             <>
               <Link
-                href="/entrar"
+                href="/usuarios/entrar"
                 className="rounded-lg px-3 py-2 text-sm font-medium text-brand-secondary hover:bg-slate-100"
               >
                 Entrar
               </Link>
 
               <Link
-                href="/cadastrar"
+                href="/usuarios/cadastrar"
                 className="rounded-lg px-3 py-2 text-sm font-medium text-brand-secondary hover:bg-slate-100"
               >
                 Cadastrar

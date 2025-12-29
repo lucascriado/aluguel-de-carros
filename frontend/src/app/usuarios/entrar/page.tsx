@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { apiFetch } from "@/lib/api";
-import { setToken } from "@/lib/auth";
+import { setToken, setName } from "@/lib/auth";
 import type { LoginResponse } from "@/lib/types";
 
 function formatCpf(value: string) {
@@ -35,15 +35,16 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // Envia o CPF já formatado (000.000.000-00), como você pediu
       const data = await apiFetch<LoginResponse>("/usuarios/entrar", {
         method: "POST",
         body: JSON.stringify({ cpf, senha }),
       });
 
       setToken(data.token);
+      setName(data.usuario.nome)
+
       window.dispatchEvent(new Event("auth-change"));
-      router.push("/usuarios");
+      router.push("/usuarios/lista");
     } catch (err: any) {
       setError(err.message || "Erro no login");
     } finally {

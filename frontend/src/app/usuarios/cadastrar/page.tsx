@@ -43,14 +43,13 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      // Envia CPF já formatado, conforme você pediu
       await apiFetch<Usuario>("/usuarios/cadastrar", {
         method: "POST",
         body: JSON.stringify({ cpf, nome, email, senha, cargo }),
       });
 
       setSuccess("Usuário cadastrado com sucesso.");
-      router.push("/usuarios");
+      router.push("/usuarios/lista");
     } catch (err: any) {
       setError(err.message || "Erro ao cadastrar usuário");
     } finally {

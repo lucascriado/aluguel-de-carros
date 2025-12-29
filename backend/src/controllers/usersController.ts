@@ -93,7 +93,6 @@ export default class usersController {
         return res.status(400).json({ error: "cpf e senha são obrigatórios" });
       }
 
-      // Buscar usuário pelo CPF
       const [rows] = await connection.query<RowDataPacket[]>(
         "SELECT * FROM usuarios WHERE cpf = ?",
         [cpf]
@@ -105,21 +104,19 @@ export default class usersController {
 
       const usuario = rows[0];
 
-      // Validar senha
       const senhaValida = await bcrypt.compare(senha, usuario.senha);
 
       if (!senhaValida) {
         return res.status(401).json({ error: "Senha incorreta" });
       }
 
-      // Criar token JWT
       const token = jwt.sign(
         {
           cpf: usuario.cpf,
           nome: usuario.nome,
           cargo: usuario.cargo
         },
-        process.env.JWT_SECRET || "b2ffcda4-2109-40d0-a7a8-0f66d6131788",
+        process.env.JWT_SECRET,
         { expiresIn: "2h" }
       );
 

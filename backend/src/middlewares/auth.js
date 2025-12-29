@@ -10,7 +10,7 @@ function Auth(req, res, next) {
   try {
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET || "b2ffcda4-2109-40d0-a7a8-0f66d6131788"
+      process.env.JWT_SECRET
     );
 
     req.user = decoded;
