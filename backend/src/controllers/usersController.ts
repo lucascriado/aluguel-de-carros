@@ -35,9 +35,9 @@ export default class usersController {
 
   static async Register(req, res) {
     try {
-      const { cpf, nome, email, senha, cargo } = req.body;
+      const { cpf, nome, email, senha } = req.body;
 
-      if (!cpf || !nome || !email || !senha || !cargo) {
+      if (!cpf || !nome || !email || !senha) {
         return res.status(400).json({ error: "campos obrigatórios faltando" });
       }
 
@@ -71,8 +71,8 @@ export default class usersController {
       const hashedPassword = await bcrypt.hash(senha, 10);
 
       const [result] = await connection.query<ResultSetHeader>(
-        "INSERT INTO usuarios (cpf, nome, email, senha, cargo) VALUES (?, ?, ?, ?, ?)",
-        [cpf, nome, email, hashedPassword, cargo]
+        "INSERT INTO usuarios (cpf, nome, email, senha) VALUES (?, ?, ?, ?)",
+        [cpf, nome, email, hashedPassword]
       );
 
       return res.status(201).json({
@@ -114,7 +114,6 @@ export default class usersController {
         {
           cpf: usuario.cpf,
           nome: usuario.nome,
-          cargo: usuario.cargo
         },
         process.env.JWT_SECRET,
         { expiresIn: "2h" }
@@ -127,7 +126,6 @@ export default class usersController {
           cpf: usuario.cpf,
           nome: usuario.nome,
           email: usuario.email,
-          cargo: usuario.cargo
         }
       });
 
