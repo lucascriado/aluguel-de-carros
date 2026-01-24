@@ -131,4 +131,8 @@ router.post("/usuarios/cadastrar", usersController.Register);
  */
 router.post("/usuarios/entrar", usersController.Login);
 
+router.get("/ping", (req, res) => {
+  res.status(200).json({ message: "ok, everything seems to be working fine ;D" });
+});
+
 export default router;
