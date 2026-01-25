@@ -8,7 +8,7 @@ export default class usersController {
 
   static async List(req, res) {
     try {
-      const [rows] = await connection.query<RowDataPacket[]>("SELECT * FROM usuarios ORDER BY id ASC");
+      const [rows] = await connection.query<RowDataPacket[]>("SELECT id, nome, email, cpf, created_at FROM usuarios ORDER BY id ASC");
       return res.json(rows);
     } catch (err) {
       console.error(err);
@@ -24,7 +24,10 @@ export default class usersController {
         return res.status(400).json({ error: "cpf não informado" });
       }
 
-      const [rows] = await connection.query<RowDataPacket[]>("SELECT * FROM usuarios WHERE cpf = ?", [cpf]);
+      const [rows] = await connection.query<RowDataPacket[]>(
+        "SELECT id, nome, email, cpf, created_at FROM usuarios WHERE cpf = ?", 
+        [cpf]
+      );
 
       return res.json(rows);
     } catch (err) {
@@ -37,50 +40,64 @@ export default class usersController {
     try {
       const { cpf, nome, email, senha } = req.body;
 
+      // Validação de campos obrigatórios
       if (!cpf || !nome || !email || !senha) {
         return res.status(400).json({ error: "campos obrigatórios faltando" });
       }
 
+      // Validação de formato de CPF (com pontos e traço)
+      const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+      if (!cpfRegex.test(cpf)) {
+        return res.status(400).json({ error: "formato de CPF inválido. Use: 000.000.000-00" });
+      }
+
+      // Validação de e-mail
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: "formato de e-mail inválido" });
+      }
+
+      // Verifica e-mail duplicado
       const [existingEmail] = await connection.query<RowDataPacket[]>(
         "SELECT id FROM usuarios WHERE email = ?",
         [email]
-      );
-
-      const [existingCpf] = await connection.query<RowDataPacket[]>(
-        "SELECT id FROM usuarios WHERE cpf = ?",
-        [cpf]
-      );
-
-      const [existingName] = await connection.query<RowDataPacket[]>(
-        "SELECT id FROM usuarios WHERE nome = ?",
-        [nome]
       );
 
       if (existingEmail.length > 0) {
         return res.status(400).json({ error: "e-mail já cadastrado" });
       }
 
+      // Verifica CPF duplicado
+      const [existingCpf] = await connection.query<RowDataPacket[]>(
+        "SELECT id FROM usuarios WHERE cpf = ?",
+        [cpf]
+      );
+
       if (existingCpf.length > 0) {
         return res.status(400).json({ error: "cpf já cadastrado" });
       }
 
-      if (existingName.length > 0) {
-        return res.status(400).json({ error: "nome já cadastrado" });
-      }
-
+      // Hash da senha com salt de 10 rounds
       const hashedPassword = await bcrypt.hash(senha, 10);
 
+      // Insere o usuário
       const [result] = await connection.query<ResultSetHeader>(
         "INSERT INTO usuarios (cpf, nome, email, senha) VALUES (?, ?, ?, ?)",
         [cpf, nome, email, hashedPassword]
       );
 
       return res.status(201).json({
-        message: `usuário cadastrado com sucesso`,
+        message: "usuário cadastrado com sucesso",
+        usuario: {
+          id: result.insertId,
+          nome,
+          email,
+          cpf
+        }
       });
 
     } catch (err) {
-      console.error(err);
+      console.error("erro no register:", err);
       return res.status(500).json({ error: "erro ao cadastrar usuário" });
     }
   }
@@ -89,48 +106,73 @@ export default class usersController {
     try {
       const { cpf, senha } = req.body;
 
+      // Validação de campos obrigatórios
       if (!cpf || !senha) {
+        console.log('campos faltando');
         return res.status(400).json({ error: "cpf e senha são obrigatórios" });
       }
 
+      // Validação de formato de CPF
+      const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+      if (!cpfRegex.test(cpf)) {
+        console.log('formato de CPF inválido');
+        return res.status(400).json({ error: "formato de CPF inválido. use: 000.000.000-00" });
+      }
+
+      // Busca usuário pelo CPF
       const [rows] = await connection.query<RowDataPacket[]>(
         "SELECT * FROM usuarios WHERE cpf = ?",
         [cpf]
       );
 
+      console.log('usuários encontrados:', rows.length);
+
       if (rows.length === 0) {
-        return res.status(404).json({ error: "Usuário não encontrado" });
+        console.log('usuário não encontrado');
+        return res.status(404).json({ error: "usuário não encontrado" });
       }
 
       const usuario = rows[0];
+      console.log('usuário encontrado:', usuario.nome);
+      console.log('hash no banco:', usuario.senha);
 
+      // Verifica a senha
       const senhaValida = await bcrypt.compare(senha, usuario.senha);
+      
+      console.log('senha válida?', senhaValida);
 
       if (!senhaValida) {
-        return res.status(401).json({ error: "Senha incorreta" });
+        console.log('senha incorreta');
+        return res.status(401).json({ error: "senha incorreta" });
       }
 
+      console.log('✅ Login bem-sucedido');
+
+      // Gera o token JWT
       const token = jwt.sign(
         {
+          id: usuario.id,
           cpf: usuario.cpf,
           nome: usuario.nome,
+          email: usuario.email
         },
         process.env.JWT_SECRET,
         { expiresIn: "2h" }
       );
 
       return res.json({
-        message: "Login realizado com sucesso",
+        message: "login realizado com sucesso",
         token,
         usuario: {
+          id: usuario.id,
           cpf: usuario.cpf,
           nome: usuario.nome,
-          email: usuario.email,
+          email: usuario.email
         }
       });
 
     } catch (err) {
-      console.error(err);
+      console.error("erro no Login:", err);
       return res.status(500).json({ error: "erro ao realizar login" });
     }
   }

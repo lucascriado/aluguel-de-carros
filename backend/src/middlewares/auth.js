@@ -4,7 +4,7 @@ function Auth(req, res, next) {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ error: "Token não fornecido" });
+    return res.status(401).json({ error: "token não fornecido" });
   }
 
   try {
@@ -17,7 +17,7 @@ function Auth(req, res, next) {
     next();
 
   } catch (err) {
-    return res.status(403).json({ error: "Token inválido ou expirado" });
+    return res.status(403).json({ error: "token inválido ou expirado" });
   }
 }
 
