@@ -1,0 +1,27 @@
+{
+  "name": "aluguel-de-carros",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"cd frontend && npm run dev\" \"cd backend && npm run dev\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucascriado/aluguel-de-carros.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/lucascriado/aluguel-de-carros/issues"
+  },
+  "homepage": "https://github.com/lucascriado/aluguel-de-carros#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

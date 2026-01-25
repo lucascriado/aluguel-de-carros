@@ -7,7 +7,6 @@ export default function Login() {
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Função para formatar CPF
   function formatCPF(value: string) {
     const numbers = value.replace(/\D/g, '');
     
@@ -43,9 +42,8 @@ export default function Login() {
       
       setTimeout(() => {
         successMsg.remove();
-        // Redirecionar para página de usuários
         window.location.href = "/usuarios";
-      }, 2000);
+      }, 250);
       
     } catch (err: any) {
       setErro(err.response?.data?.error || "Erro ao entrar");

@@ -16,26 +16,6 @@ export default class usersController {
     }
   }
 
-  static async FindUser(req, res) {
-    try {
-      const { cpf } = req.query;
-
-      if (!cpf) {
-        return res.status(400).json({ error: "cpf não informado" });
-      }
-
-      const [rows] = await connection.query<RowDataPacket[]>(
-        "SELECT id, nome, email, cpf, created_at FROM usuarios WHERE cpf = ?", 
-        [cpf]
-      );
-
-      return res.json(rows);
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: "erro ao buscar usuários" });
-    }
-  }
-
   static async Register(req, res) {
     try {
       const { cpf, nome, email, senha } = req.body;
@@ -163,5 +143,9 @@ export default class usersController {
       console.error("erro no Login:", err);
       return res.status(500).json({ error: "erro ao realizar login" });
     }
+  }
+
+  static async ResetPassword(req, res) {
+    console.log('ResetPassword')
   }
 }

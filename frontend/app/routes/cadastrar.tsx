@@ -39,10 +39,9 @@ export default function Cadastrar() {
       setMsg("Usuário cadastrado com sucesso");
       setForm({ nome: "", email: "", cpf: "", senha: "" });
       
-      // Redirecionar para login após 1.5 segundos
       setTimeout(() => {
         window.location.href = "/entrar";
-      }, 1500);
+      }, 250);
     } catch (err: any) {
       setMsg(err.response?.data?.error || "Erro ao cadastrar");
     } finally {

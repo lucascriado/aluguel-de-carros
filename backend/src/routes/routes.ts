@@ -6,11 +6,11 @@ const router = Router();
 
 router.get("/usuarios/lista", Auth, usersController.List);
 
-router.get("/usuarios/encontrar-usuario", usersController.FindUser);
-
 router.post("/usuarios/cadastrar", usersController.Register);
 
 router.post("/usuarios/entrar", usersController.Login);
+
+router.post("/usuarios/resetarsenha", usersController.ResetPassword);
 
 router.get("/ping", (req, res) => {
   res.status(200).json({ message: "ok, everything seems to be working fine ;D" });

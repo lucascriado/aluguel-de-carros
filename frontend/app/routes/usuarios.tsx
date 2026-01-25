@@ -26,7 +26,7 @@ export default function Usuarios() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    window.location.href = "/entrar";
   };
 
   return (
@@ -121,13 +121,6 @@ export default function Usuarios() {
             </div>
           )}
         </div>
-
-        {/* Informação adicional */}
-        {!loading && !erro && usuarios.length > 0 && (
-          <div className="mt-4 text-center text-sm text-gray-500">
-            Total de {usuarios.length} usuário{usuarios.length !== 1 ? 's' : ''} cadastrado{usuarios.length !== 1 ? 's' : ''}
-          </div>
-        )}
       </div>
     </div>
   );
