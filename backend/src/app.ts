@@ -11,6 +11,6 @@ app.use(express.json());
 
 app.use("/api", router);
 
-app.listen(3000, () => {
-  console.log("Servidor rodando na porta 3000");
+app.listen(9000, () => {
+  console.log("Servidor rodando na porta 9000");
 });
