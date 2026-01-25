@@ -26,7 +26,7 @@ export default function Usuarios() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/login"; // ou use seu sistema de navegação
+    window.location.href = "/login";
   };
 
   return (

@@ -43,7 +43,8 @@ export default function Login() {
       
       setTimeout(() => {
         successMsg.remove();
-        // Redirecionar ou atualizar estado aqui
+        // Redirecionar para página de usuários
+        window.location.href = "/usuarios";
       }, 2000);
       
     } catch (err: any) {
@@ -56,7 +57,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
       <div className="w-full max-w-md">
-        <form onSubmit={handleLogin} className="bg-white p-8 rounded-2xl shadow-xl">
+        <div className="bg-white p-8 rounded-2xl shadow-xl">
           {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
@@ -108,7 +109,7 @@ export default function Login() {
 
           {/* Botão */}
           <button
-            type="submit"
+            onClick={handleLogin}
             disabled={loading}
             className="w-full mt-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
           >
@@ -127,11 +128,27 @@ export default function Login() {
 
           {/* Link para esqueceu senha (opcional) */}
           <div className="mt-4 text-center">
-            <a href="#" className="text-sm text-blue-600 hover:underline">
+            <a
+              href="#"
+              className="text-sm text-blue-600 hover:underline"
+            >
               Esqueceu sua senha?
             </a>
           </div>
-        </form>
+
+          {/* Link para cadastro */}
+          <div className="mt-6 text-center border-t pt-6">
+            <p className="text-sm text-gray-600">
+              Não possui uma conta?{" "}
+              <a
+                href="/cadastrar"
+                className="text-blue-600 font-medium hover:underline"
+              >
+                Cadastrar
+              </a>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

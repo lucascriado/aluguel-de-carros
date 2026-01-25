@@ -40,24 +40,20 @@ export default class usersController {
     try {
       const { cpf, nome, email, senha } = req.body;
 
-      // Validação de campos obrigatórios
       if (!cpf || !nome || !email || !senha) {
         return res.status(400).json({ error: "campos obrigatórios faltando" });
       }
 
-      // Validação de formato de CPF (com pontos e traço)
       const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
       if (!cpfRegex.test(cpf)) {
         return res.status(400).json({ error: "formato de CPF inválido. Use: 000.000.000-00" });
       }
 
-      // Validação de e-mail
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         return res.status(400).json({ error: "formato de e-mail inválido" });
       }
 
-      // Verifica e-mail duplicado
       const [existingEmail] = await connection.query<RowDataPacket[]>(
         "SELECT id FROM usuarios WHERE email = ?",
         [email]
@@ -67,7 +63,6 @@ export default class usersController {
         return res.status(400).json({ error: "e-mail já cadastrado" });
       }
 
-      // Verifica CPF duplicado
       const [existingCpf] = await connection.query<RowDataPacket[]>(
         "SELECT id FROM usuarios WHERE cpf = ?",
         [cpf]
@@ -77,10 +72,8 @@ export default class usersController {
         return res.status(400).json({ error: "cpf já cadastrado" });
       }
 
-      // Hash da senha com salt de 10 rounds
       const hashedPassword = await bcrypt.hash(senha, 10);
 
-      // Insere o usuário
       const [result] = await connection.query<ResultSetHeader>(
         "INSERT INTO usuarios (cpf, nome, email, senha) VALUES (?, ?, ?, ?)",
         [cpf, nome, email, hashedPassword]
@@ -106,20 +99,17 @@ export default class usersController {
     try {
       const { cpf, senha } = req.body;
 
-      // Validação de campos obrigatórios
       if (!cpf || !senha) {
         console.log('campos faltando');
         return res.status(400).json({ error: "cpf e senha são obrigatórios" });
       }
 
-      // Validação de formato de CPF
       const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
       if (!cpfRegex.test(cpf)) {
         console.log('formato de CPF inválido');
         return res.status(400).json({ error: "formato de CPF inválido. use: 000.000.000-00" });
       }
 
-      // Busca usuário pelo CPF
       const [rows] = await connection.query<RowDataPacket[]>(
         "SELECT * FROM usuarios WHERE cpf = ?",
         [cpf]
@@ -136,7 +126,6 @@ export default class usersController {
       console.log('usuário encontrado:', usuario.nome);
       console.log('hash no banco:', usuario.senha);
 
-      // Verifica a senha
       const senhaValida = await bcrypt.compare(senha, usuario.senha);
       
       console.log('senha válida?', senhaValida);
@@ -148,7 +137,6 @@ export default class usersController {
 
       console.log('✅ Login bem-sucedido');
 
-      // Gera o token JWT
       const token = jwt.sign(
         {
           id: usuario.id,
